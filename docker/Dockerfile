@@ -25,3 +25,8 @@ ADD entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/google-fluentd"]
+
+RUN /opt/google-fluentd/embedded/bin/gem uninstall fluent-plugin-google-cloud -ax --force && \
+    /opt/google-fluentd/embedded/bin/gem install fluent-plugin-google-cloud -v 0.7.0.pre.1 && \
+    /opt/google-fluentd/embedded/bin/gem uninstall fluentd -ax --force && \
+    /opt/google-fluentd/embedded/bin/gem install fluentd
