@@ -22,3 +22,8 @@ ADD entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/google-fluentd"]
+
+ENV LD_PRELOAD=/opt/google-fluentd/embedded/lib/libjemalloc.so
+
+RUN /opt/google-fluentd/embedded/bin/gem uninstall systemd-journal -ax --force && \
+    /opt/google-fluentd/embedded/bin/gem install systemd-journal -v 1.3.0
