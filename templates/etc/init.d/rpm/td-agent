@@ -129,9 +129,6 @@ START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS}"
 # Exit if the package is not installed
 [ -x "${TD_AGENT_RUBY}" ] || exit 0
 
-# Source function library.
-. <%= File.join(root_path, "etc/init.d/functions") %>
-
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
 . <%= Shellwords.shellescape(File.join(root_path, "lib/lsb/init-functions")) %>
@@ -144,7 +141,7 @@ if [ -n "${TD_AGENT_USER}" ]; then
   fi
   mkdir -p "$(dirname "${TD_AGENT_PID_FILE}")"
   chown -R "${TD_AGENT_USER}" "$(dirname "${TD_AGENT_PID_FILE}")"
-  START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --user ${TD_AGENT_USER}"
+  START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} -u ${TD_AGENT_USER}"
 fi
 
 if [ -n "${TD_AGENT_GROUP}" ]; then
@@ -202,7 +199,7 @@ do_start() {
   fi
 
   local RETVAL=0
-  daemon --pidfile="${TD_AGENT_PID_FILE}" ${START_STOP_DAEMON_ARGS} "${TD_AGENT_RUBY}" ${TD_AGENT_ARGS} || RETVAL="$?"
+  start_daemon -p "${TD_AGENT_PID_FILE}" ${START_STOP_DAEMON_ARGS} "${TD_AGENT_RUBY}" ${TD_AGENT_ARGS} || RETVAL="$?"
   [ $RETVAL -eq 0 ] && touch "${TD_AGENT_LOCK_FILE}"
   return $RETVAL
 }
