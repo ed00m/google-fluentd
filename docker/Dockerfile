@@ -26,4 +26,7 @@ CMD ["/usr/sbin/google-fluentd"]
 RUN /opt/google-fluentd/embedded/bin/gem uninstall fluentd -ax --force && \
     /opt/google-fluentd/embedded/bin/gem install fluentd -v 0.12.41 && \
     /opt/google-fluentd/embedded/bin/gem uninstall fluent-plugin-systemd -ax --force && \
-    /opt/google-fluentd/embedded/bin/gem install fluent-plugin-systemd -v 0.0.9
+    /opt/google-fluentd/embedded/bin/gem install fluent-plugin-systemd -v 0.0.9 && \
+    # Pin systemd-journal to < 1.3.2 until https://github.com/ledbettj/systemd-journal/issues/79 is fixed.
+    /opt/google-fluentd/embedded/bin/gem uninstall systemd-journal -ax --force && \
+    /opt/google-fluentd/embedded/bin/gem install systemd-journal -v 1.3.0
