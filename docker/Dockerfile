@@ -19,14 +19,12 @@ RUN curl -sS https://dl.google.com/cloudagents/install-logging-agent.sh | REPO_S
     && sed -i "s/num_threads 8/num_threads 8\n  detect_json true\n  # Enable metadata agent lookups.\n  enable_metadata_agent true\n  metadata_agent_url \"http:\/\/local-metadata-agent.stackdriver.com:8000\"/" "/etc/google-fluentd/google-fluentd.conf"
 
 ADD entrypoint.sh /entrypoint.sh
+COPY fluent-plugin-google-cloud-0.6.22.lingshi.fake.gem /fluent-plugin-google-cloud-0.6.22.lingshi.fake.gem
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/google-fluentd"]
 
-RUN /opt/google-fluentd/embedded/bin/gem uninstall fluentd -ax --force && \
-    /opt/google-fluentd/embedded/bin/gem install fluentd -v 0.12.43 && \
-    /opt/google-fluentd/embedded/bin/gem uninstall fluent-plugin-systemd -ax --force && \
-    /opt/google-fluentd/embedded/bin/gem install fluent-plugin-systemd -v 0.0.9 && \
-    # Pin systemd-journal to < 1.3.2 until https://github.com/ledbettj/systemd-journal/issues/79 is fixed.
-    /opt/google-fluentd/embedded/bin/gem uninstall systemd-journal -ax --force && \
-    /opt/google-fluentd/embedded/bin/gem install systemd-journal -v 1.3.0
+RUN /opt/google-fluentd/embedded/bin/gem uninstall systemd-journal -ax --force && \
+    /opt/google-fluentd/embedded/bin/gem install systemd-journal -v 1.3.0 && \
+    /opt/google-fluentd/embedded/bin/gem uninstall fluent-plugin-google-cloud -ax --force && \
+    /opt/google-fluentd/embedded/bin/gem install /fluent-plugin-google-cloud-0.6.22.lingshi.fake.gem
