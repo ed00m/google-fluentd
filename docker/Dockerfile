@@ -24,6 +24,8 @@ COPY fluent-plugin-google-cloud-0.6.22.lingshi.fake.gem /fluent-plugin-google-cl
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/google-fluentd"]
 
+ENV LD_PRELOAD=/opt/google-fluentd/embedded/lib/libjemalloc.so
+
 RUN /opt/google-fluentd/embedded/bin/gem uninstall systemd-journal -ax --force && \
     /opt/google-fluentd/embedded/bin/gem install systemd-journal -v 1.3.0 && \
     /opt/google-fluentd/embedded/bin/gem uninstall fluent-plugin-google-cloud -ax --force && \
