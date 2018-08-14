@@ -19,17 +19,21 @@ if [[ -z "${INTERNAL_CONTAINER_REGISTRY}" ]]; then
   exit 1;
 fi
 
-if [ "${DESTINATION}" == "internal" ]; then
-  echo "Building ${DOCKER_IMAGE_VERSION}.";
-  docker build --no-cache -t "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}" .
-  echo "Releasing ${DOCKER_IMAGE_VERSION} to the internal container registry.";
-  docker push "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
-elif [ "${DESTINATION}" == "public" ]; then
-  echo "Releasing ${DOCKER_IMAGE_VERSION} to the public container registry.";
-  docker pull "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
-  docker tag "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}" "${PUBLIC_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
-  docker push "${PUBLIC_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
-else
-  echo "Unknown DESTINATION environment variable ${DESTINATION}.";
-  exit 1;
-fi
+case "${DESTINATION}" in
+  internal)
+    echo "Building ${DOCKER_IMAGE_VERSION}.";
+    docker build --no-cache -t "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}" .;
+    echo "Releasing ${DOCKER_IMAGE_VERSION} to the internal container registry.";
+    docker push "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
+    ;;
+  public)
+    echo "Releasing ${DOCKER_IMAGE_VERSION} to the public container registry.";
+    docker pull "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
+    docker tag "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}" "${PUBLIC_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
+    docker push "${PUBLIC_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
+    ;;
+  *)
+    echo "Unknown DESTINATION environment variable ${DESTINATION}.";
+    exit 1;
+    ;;
+esac
