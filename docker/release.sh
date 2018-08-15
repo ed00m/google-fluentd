@@ -10,7 +10,7 @@ DOCKER_IMAGE_NAME="stackdriver-logging-agent"
 PUBLIC_CONTAINER_REGISTRY="gcr.io/stackdriver-agents"
 DESTINATION="${DESTINATION:-internal}"
 
-# Set versions. See docker/VERSION file for details.
+# Set version variables. See docker/VERSION file for details.
 source VERSION
 
 # Decide the Docker image version to be released based on the current Git branch.
