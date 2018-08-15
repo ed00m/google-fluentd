@@ -16,7 +16,7 @@ source VERSION
 # Decide the Docker image version to be released based on the current Git branch.
 GIT_BRANCH=`git status | grep "On branch" | sed 's/On branch //g'`
 case "${GIT_BRANCH}" in
-  lingshi-version)
+  master)
     DOCKER_IMAGE_VERSION="${DOCKERFILE_VERSION}-${GOOGLE_FLUENTD_VERSION}";
     ;;
   # TODO(qingling128): Remove this case when "kubernetes" branch is deprecated.
