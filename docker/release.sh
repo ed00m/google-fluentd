@@ -6,7 +6,8 @@
 # $ DESTINATION=public INTERNAL_CONTAINER_REGISTRY=<internal_registry> ./release.sh
 set -ex
 
-PUBLIC_CONTAINER_REGISTRY="gcr.io/stackdriver-agents/stackdriver-logging-agent"
+CONTAINER_NAME='stackdriver-logging-agent'
+PUBLIC_CONTAINER_REGISTRY="gcr.io/stackdriver-agents"
 DESTINATION="${DESTINATION:-internal}"
 
 # Set versions. See docker/VERSION file for details.
@@ -18,6 +19,7 @@ case "${GIT_BRANCH}" in
   lingshi-version)
     DOCKER_IMAGE_VERSION="${DOCKERFILE_VERSION}-${GOOGLE_FLUENTD_VERSION}";
     ;;
+  # TODO(qingling128): Remove this case when "kubernetes" branch is deprecated.
   kubernetes)
     DOCKER_IMAGE_VERSION="${DOCKERFILE_VERSION}-${GOOGLE_FLUENTD_VERSION}-k8s";
     ;;
@@ -36,15 +38,15 @@ fi
 case "${DESTINATION}" in
   internal)
     echo "Building ${DOCKER_IMAGE_VERSION}.";
-    docker build --no-cache -t "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}" .;
+    docker build --no-cache -t "${INTERNAL_CONTAINER_REGISTRY}/${CONTAINER_NAME}:${DOCKER_IMAGE_VERSION}" .;
     echo "Releasing ${DOCKER_IMAGE_VERSION} to the internal container registry.";
-    docker push "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
+    docker push "${INTERNAL_CONTAINER_REGISTRY}/${CONTAINER_NAME}:${DOCKER_IMAGE_VERSION}";
     ;;
   public)
     echo "Releasing ${DOCKER_IMAGE_VERSION} to the public container registry.";
-    docker pull "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
-    docker tag "${INTERNAL_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}" "${PUBLIC_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
-    docker push "${PUBLIC_CONTAINER_REGISTRY}:${DOCKER_IMAGE_VERSION}";
+    docker pull "${INTERNAL_CONTAINER_REGISTRY}/${CONTAINER_NAME}:${DOCKER_IMAGE_VERSION}";
+    docker tag "${INTERNAL_CONTAINER_REGISTRY}/${CONTAINER_NAME}:${DOCKER_IMAGE_VERSION}" "${PUBLIC_CONTAINER_REGISTRY}/${CONTAINER_NAME}:${DOCKER_IMAGE_VERSION}";
+    docker push "${PUBLIC_CONTAINER_REGISTRY}/${CONTAINER_NAME}:${DOCKER_IMAGE_VERSION}";
     ;;
   *)
     echo "Unknown DESTINATION environment variable ${DESTINATION}.";
